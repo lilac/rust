@@ -171,6 +171,11 @@ pub trait Ord {
     fn ge(&self, other: &Self) -> bool { !self.lt(other) }
 }
 
+impl<T: TotalOrd> Ord for T {
+    #[inline]
+    fn lt(&self, other: &T) -> bool { self.cmp(other) == Less }
+}
+
 /// The equivalence relation. Two values may be equivalent even if they are
 /// of different types. The most common use case for this relation is
 /// container types; e.g. it is often desirable to be able to use `&str`
@@ -200,6 +205,12 @@ mod test {
         assert_eq!(5.cmp(&5), Equal);
         assert_eq!((-5).cmp(&12), Less);
         assert_eq!(12.cmp(-5), Greater);
+    }
+
+    #[test]
+    fn test_int_ord() {
+        assert_eq!(2.lt(&3));
+        assert_eq!((-5).lt(&0));
     }
 
     #[test]
